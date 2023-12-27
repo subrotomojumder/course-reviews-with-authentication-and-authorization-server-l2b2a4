@@ -1,0 +1,28 @@
+import { Model } from 'mongoose';
+import { Types } from 'mongoose';
+export type ITag = {
+  name: string;
+  isDeleted: boolean;
+};
+export type IDetails = {
+  level: string;
+  description: string;
+};
+
+export type ICourse = {
+  title: string;
+  instructor: string;
+  categoryId: Types.ObjectId;
+  price: number;
+  tags: ITag[];
+  startDate: Date;
+  endDate: Date;
+  durationInWeeks?: number;
+  language: string;
+  provider: string;
+  details: IDetails;
+};
+
+export interface CourseModel extends Model<ICourse> {
+  isExistCourse(id: string): Promise<ICourse | null>;
+}
