@@ -21,6 +21,7 @@ export type ICourse = {
   language: string;
   provider: string;
   details: IDetails;
+  createdBy?: Types.ObjectId;
 };
 
 export interface CourseModel extends Model<ICourse> {

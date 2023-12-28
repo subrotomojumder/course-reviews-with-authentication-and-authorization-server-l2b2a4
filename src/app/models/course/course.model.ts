@@ -73,6 +73,11 @@ const courseSchema = new Schema<ICourse, CourseModel>(
       type: Number,
     },
     details: detailsSchema,
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User"
+    }
   }
 );
 courseSchema.pre('save', async function (next) {
@@ -89,13 +94,6 @@ courseSchema.pre('save', async function (next) {
     next();
   }
 });
-// courseSchema.virtual('durationInWeeks').get(function () {
-//   const start = this?.startDate?.getTime();
-//   const end = this?.endDate?.getTime();
-//   const millisecondsInWeek = 7 * 24 * 60 * 60 * 1000;
-//   const durationInWeeks = Math.ceil((end - start) / millisecondsInWeek);
-//   return durationInWeeks;
-// });
 courseSchema.statics.isExistCourse = async function (_id: string) {
   const existCourse = Course.findOne({ _id });
   return existCourse;

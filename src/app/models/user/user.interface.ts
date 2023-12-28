@@ -11,6 +11,7 @@ export interface IUser {
   role: IUserRole;
 }
 export interface UserModel extends Model<IUser> {
+  isUserExists(id: string): Promise<IUser>;
   isPasswordCorrect(
     plainTextPassword: string,
     hashPassword: string,

@@ -37,13 +37,16 @@ userSchema.pre('save', async function (next) {
   user.password = await hashingPassword(user.password);
   next();
 });
-
+userSchema.statics.isUserExists = async function (id: string) {
+  return await User.findById(id)
+};
 userSchema.statics.isPasswordCorrect = async function (
   plainTextPassword: string,
   hashPassword: string,
 ) {
   return await bcrypt.compare(plainTextPassword, hashPassword);
 };
+
 
 
 export const User = model<IUser, UserModel>('User', userSchema);

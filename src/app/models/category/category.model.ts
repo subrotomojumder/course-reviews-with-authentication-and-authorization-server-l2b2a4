@@ -7,6 +7,11 @@ const categorySchema = new Schema<ICategory>({
     required: true,
     unique: true,
   },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User"
+  }
 });
 
 export const Category = model<ICategory>('Category', categorySchema);
