@@ -1,6 +1,6 @@
-# Course review backend
+# Authentication and Authorization system
 
-### Live Server Link :  [https://assignment-course-review-3-m16.vercel.app/](https://assignment-course-review-3-m16.vercel.app/)
+### Live Server Link :  [1111](1111)
 
 ### Needed for Run locally
 
@@ -18,7 +18,7 @@ PORT= port
 DATABASE_URL= database uri
 NODE_ENV= development or production
 ```
-* After run npm run start:dev to start the server.
+* After run npm run dev to start the server.
 
 ```bash
 npm run dev

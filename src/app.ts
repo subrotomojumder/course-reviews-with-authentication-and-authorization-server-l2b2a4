@@ -11,8 +11,8 @@ app.use(cors());
 app.use('/api', router);
 
 app.get('/', (req: Request, res: Response) => {
-  const text: string = 'course review assignment!';
-  res.send(text);
+  const message: string = 'Authentication and Authorization system-4!';
+  res.send({ message });
 });
 
 app.all('*', notFound);
