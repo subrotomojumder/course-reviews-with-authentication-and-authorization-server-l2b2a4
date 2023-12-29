@@ -4,22 +4,25 @@ import { CourseValidationSchema } from './course.validation';
 import { CourseControllers } from './course.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
 
-const courseRouter = Router();
 const coursesRouter = Router();
+const courseRouter = Router();
+
 coursesRouter.post(
   '/',
-  authMiddleware("admin"),
+  authMiddleware('admin'),
   validationMiddleware(CourseValidationSchema.createCourseValidationSchema),
   CourseControllers.createCourse,
 );
-courseRouter.get('/best', CourseControllers.getBestCourse);
 coursesRouter.get('/', CourseControllers.getAllCourse);
 coursesRouter.get('/:courseId/reviews', CourseControllers.getCourseWithReview);
 coursesRouter.put(
   '/:courseId',
+  authMiddleware('admin'),
   validationMiddleware(CourseValidationSchema.updateCourseValidationSchema),
   CourseControllers.updateCourse,
 );
+
+courseRouter.get('/best', CourseControllers.getBestCourse);
 
 export const CourseRoutes = {
   courseRouter,

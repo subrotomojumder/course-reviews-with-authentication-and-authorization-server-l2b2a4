@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { ICategory } from './category.interface';
+import { CategoryModel, ICategory } from './category.interface';
 
-const categorySchema = new Schema<ICategory>(
+const categorySchema = new Schema<ICategory, CategoryModel>(
   {
     name: {
       type: String,
@@ -19,5 +19,8 @@ const categorySchema = new Schema<ICategory>(
     versionKey: false,
   },
 );
-
-export const Category = model<ICategory>('Category', categorySchema);
+categorySchema.statics.isExistCategory = async function (_id: Schema.Types.ObjectId) {
+  const existCategory = Category.findById(_id);
+  return existCategory;
+};
+export const Category = model<ICategory , CategoryModel>('Category', categorySchema);

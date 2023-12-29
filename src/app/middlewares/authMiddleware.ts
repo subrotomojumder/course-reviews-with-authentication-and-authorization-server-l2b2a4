@@ -13,16 +13,6 @@ const authMiddleware = (...requiredRoles: IUserRole[]) => {
       if (!token) {
         throw new Error();
       }
-      // let decoded: JwtPayload = {};
-      // jwt.verify(token, config.jwt_access_secret as string, function(err, decodedData) {
-      //   if (err) {
-      //     throw new AppError(
-      //       httpStatus.UNAUTHORIZED,
-      //       'You do not have the necessary permissions to access this resource.',
-      //     );
-      //   }
-      //   return decoded = decodedData as JwtPayload;
-      // });
       const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
       const { role, _id, email, iat } = decoded;
       const user = await User.findOne({ role, _id, email }).select(

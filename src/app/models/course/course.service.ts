@@ -11,8 +11,14 @@ import { Review } from '../review/review.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { metaData } from '../../queryHelpers/metaData';
+import { User } from '../user/user.model';
+import { Category } from '../category/category.model';
 
 const createCourseInDB = async (payload: ICourse) => {
+  const isExistsCategory = await Category.isExistCategory(payload.categoryId);
+  if (!isExistsCategory) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Category is not exists!');
+  }
   const result = await Course.create(payload);
   return result;
 };
@@ -21,7 +27,9 @@ const getAllCourseInDB = async (query: Record<string, unknown>) => {
   const filterQuery = filter(searchQuery, query);
   const sortQuery = sort(filterQuery, query);
   const paginationQuery = pagination(sortQuery, query);
-  const result = await selectFields(paginationQuery, query).populate('createdBy', '-createdAt -updatedAt').lean();
+  const result = await selectFields(paginationQuery, query)
+    .populate('createdBy', '-createdAt -updatedAt')
+    .lean();
   const metaResult = await metaData(paginationQuery, query);
   return {
     meta: metaResult,
@@ -29,40 +37,25 @@ const getAllCourseInDB = async (query: Record<string, unknown>) => {
   };
 };
 const getCourseWithReviewsInDB = async (id: string) => {
-  if (!(await Course.isExistCourse(id))) {
+  const course = await Course.findById(id).populate(
+    'createdBy',
+    '-createdAt -updatedAt',
+  );
+  if (!course) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Course is not exists!');
   }
-  const reviewsResult = await Course.aggregate([
-    { $match: { _id: new mongoose.Types.ObjectId(id) } },
-    {
-      $lookup: {
-        from: 'reviews',
-        localField: '_id',
-        foreignField: 'courseId',
-        as: 'reviews',
-      },
-    },
-    {
-      $project: {
-        course: {
-          $mergeObjects: ['$$ROOT', { reviews: [] }],
-        },
-        reviews: 1,
-        _id: 0,
-      },
-    },
-    {
-      $unset: 'course.reviews',
-    },
-  ]);
-  // const reviewsResult = await Review.aggregate([
-  //   { $match: { courseId: new mongoose.Types.ObjectId(id) } },
-  //   { $project: { courseId: 1, rating: 1, review: 1, _id: 0 } },
-  // ]);
-  return reviewsResult[0];
+  const reviews = await Review.find({ courseId: id }).populate(
+    'createdBy',
+    '-createdAt -updatedAt',
+  );
+  return {
+    course,
+    reviews,
+  };
 };
 const updateCourseInDB = async (id: string, payload: Partial<ICourse>) => {
-  if (!(await Course.isExistCourse(id))) {
+  const isExistsCourse = await Course.isExistCourse(id);
+  if (!isExistsCourse) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Course is not exists!');
   }
   const {
@@ -163,7 +156,10 @@ const updateCourseInDB = async (id: string, payload: Partial<ICourse>) => {
     }
     await session.commitTransaction();
     await session.endSession();
-    const result = await Course.findById(id);
+    const result = await Course.findById(id).populate(
+      'createdBy',
+      '-createdAt -updatedAt',
+    );
     return result;
   } catch (error) {
     await session.abortTransaction();
@@ -191,19 +187,29 @@ const getBestCourseInDB = async () => {
         from: 'courses',
         localField: '_id',
         foreignField: '_id',
-        as: 'courses',
+        as: 'course',
       },
     },
     {
+      $unwind: '$course', // Unwind the array created by the $lookup
+    },
+    {
       $project: {
-        course: { $arrayElemAt: ['$courses', 0] },
-        reviewCount: 1,
-        averageRating: 1,
         _id: 0,
       },
     },
   ]);
-  return result[0];
+  if (result[0]?.course) {
+    const userId = result[0]?.course?.createdBy;
+    const user = await User.findById(userId).select('-createdAt -updatedAt');
+    result[0].course.createdBy = user;
+    return result[0];
+  } else {
+    return {
+      averageRating: 0,
+      reviewCount: 0,
+    };
+  }
 };
 export const CourseServices = {
   createCourseInDB,
