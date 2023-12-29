@@ -40,9 +40,10 @@ npm run dev
         Username : subroto_majumder
         Password : Superuser5*
 
-### Api endpoint Explanations documentation : [https://authentication-authorization-assign4-m21.vercel.app/](https://authentication-authorization-assign4-m21.vercel.app/)
 
 
-#### instructions :
+### instructions :
 
 If you want to create or update documents , The body must be of **json** type data.
+
+### Api endpoint Explanations documentation : [https://documenter.getpostman.com/view/24264048/2s9YsDjEY8](https://documenter.getpostman.com/view/24264048/2s9YsDjEY8)
