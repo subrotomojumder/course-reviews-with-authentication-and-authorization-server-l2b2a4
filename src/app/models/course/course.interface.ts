@@ -26,5 +26,5 @@ export type ICourse = {
 };
 
 export interface CourseModel extends Model<ICourse> {
-  isExistCourse(id: string): Promise<ICourse | null>;
+  isExistCourse(id:Types.ObjectId ): Promise<ICourse | null>;
 }

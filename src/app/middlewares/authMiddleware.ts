@@ -1,33 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import { IUserRole } from '../models/user/user.interface';
-import AppError from '../errors/AppError';
-import httpStatus from 'http-status';
-import { verifyToken } from '../models/user/user.utils';
+import jwt from 'jsonwebtoken'
 import { User } from '../models/user/user.model';
 import { JwtPayload } from 'jsonwebtoken';
+import config from '../config';
 
 const authMiddleware = (...requiredRoles: IUserRole[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const token = req.headers.authorization;
       if (!token) {
-        throw new AppError(
-          httpStatus.UNAUTHORIZED,
-          'You do not have the necessary permissions to access this resource.',
-        );
+        throw new Error();
       }
-      const decoded = verifyToken(token);
+      // let decoded: JwtPayload = {};
+      // jwt.verify(token, config.jwt_access_secret as string, function(err, decodedData) {
+      //   if (err) {
+      //     throw new AppError(
+      //       httpStatus.UNAUTHORIZED,
+      //       'You do not have the necessary permissions to access this resource.',
+      //     );
+      //   }
+      //   return decoded = decodedData as JwtPayload;
+      // });
+      const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
       const { role, _id, email, iat } = decoded;
-
       const user = await User.findOne({ role, _id, email }).select(
         '+passwordHistory',
       );
       if (!user) {
-        throw new AppError(
-          httpStatus.NOT_FOUND,
-          'You do not have the necessary permissions to access this resource.',
-        );
+        throw new Error(    );
       }
       const lastPassUpdateTime = user.passwordHistory?.sort(
         (a, b) => b.passwordChangeAt.getTime() - a.passwordChangeAt.getTime(),
@@ -39,24 +41,18 @@ const authMiddleware = (...requiredRoles: IUserRole[]) => {
           iat as number,
         )
       ) {
-        throw new AppError(
-          httpStatus.UNAUTHORIZED,
-          'You do not have the necessary permissions to access this resource.',
-        );
+        throw new Error(   );
       }
       if (requiredRoles && !requiredRoles.includes(role)) {
-        throw new AppError(
-          httpStatus.UNAUTHORIZED,
-          'You do not have the necessary permissions to access this resource.',
-        );
+        throw new Error( );
       }
       req.user = decoded as JwtPayload;
       next();
     } catch (error: any) {
-      res.status(error.statusCode).json({
+      res.status(error.statusCode || 400).json({
         success: false,
         message: 'Unauthorized Access',
-        errorMessage: error.message,
+        errorMessage: "You do not have the necessary permissions to access this resource.",
         errorDetails: null,
         stack: null,
       });

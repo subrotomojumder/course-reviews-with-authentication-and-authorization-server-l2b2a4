@@ -10,6 +10,7 @@ import { selectFields } from '../../queryHelpers/selectFields';
 import { Review } from '../review/review.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
+import { metaData } from '../../queryHelpers/metaData';
 
 const createCourseInDB = async (payload: ICourse) => {
   const result = await Course.create(payload);
@@ -20,13 +21,10 @@ const getAllCourseInDB = async (query: Record<string, unknown>) => {
   const filterQuery = filter(searchQuery, query);
   const sortQuery = sort(filterQuery, query);
   const paginationQuery = pagination(sortQuery, query);
-  const result = await selectFields(paginationQuery, query).lean();
+  const result = await selectFields(paginationQuery, query).populate('createdBy', '-createdAt -updatedAt').lean();
+  const metaResult = await metaData(paginationQuery, query);
   return {
-    meta: {
-      page: Number(query.page) || 1,
-      limit: Number(query.page) || 10,
-      total: await Course.countDocuments({}),
-    },
+    meta: metaResult,
     data: result,
   };
 };

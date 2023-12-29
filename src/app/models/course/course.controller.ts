@@ -4,7 +4,11 @@ import sendResponseFunc from '../../utils/sendResponseFunc';
 import httpStatus from 'http-status';
 
 const createCourse = catchAsync(async (req, res) => {
-  const result = await CourseServices.createCourseInDB(req.body);
+  const { _id } = req.user;
+  const result = await CourseServices.createCourseInDB({
+    ...req.body,
+    createdBy: _id,
+  });
   sendResponseFunc(res, {
     statusCode: 201,
     success: true,
@@ -61,5 +65,5 @@ export const CourseControllers = {
   getAllCourse,
   updateCourse,
   getCourseWithReview,
-  getBestCourse
+  getBestCourse,
 };

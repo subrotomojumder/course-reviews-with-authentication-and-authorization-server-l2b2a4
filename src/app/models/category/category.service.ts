@@ -7,7 +7,7 @@ const createCategoryInDB = async (payload: ICategory) => {
 };
 
 const getAllCategoriesInDB = async () => {
-  const result = await Category.find();
+  const result = await Category.find().populate('createdBy', '-createdAt -updatedAt');
   return result;
 };
 

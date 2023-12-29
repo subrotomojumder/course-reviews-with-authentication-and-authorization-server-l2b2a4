@@ -76,9 +76,13 @@ const courseSchema = new Schema<ICourse, CourseModel>(
     createdBy: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "User"
-    }
-  }
+      ref: 'User',
+    },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
 );
 courseSchema.pre('save', async function (next) {
   if (this.startDate.getTime() > this.endDate.getTime()) {
@@ -94,8 +98,8 @@ courseSchema.pre('save', async function (next) {
     next();
   }
 });
-courseSchema.statics.isExistCourse = async function (_id: string) {
-  const existCourse = Course.findOne({ _id });
+courseSchema.statics.isExistCourse = async function (_id: Schema.Types.ObjectId) {
+  const existCourse = Course.findById(_id);
   return existCourse;
 };
 export const Course = model<ICourse, CourseModel>('Course', courseSchema);

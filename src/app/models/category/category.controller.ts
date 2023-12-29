@@ -4,7 +4,11 @@ import { CategoryServices } from './category.service';
 import sendResponseFunc from '../../utils/sendResponseFunc';
 
 const createCategory = catchAsync(async (req, res) => {
-  const result = await CategoryServices.createCategoryInDB(req.body);
+  const { _id } = req.user;
+  const result = await CategoryServices.createCategoryInDB({
+    ...req.body,
+    createdBy: _id,
+  });
   sendResponseFunc(res, {
     statusCode: 201,
     success: true,
@@ -24,5 +28,5 @@ const getAllCategory = catchAsync(async (req, res) => {
 
 export const CategoryControllers = {
   createCategory,
-  getAllCategory
+  getAllCategory,
 };

@@ -2,18 +2,17 @@ import { Router } from 'express';
 import validationMiddleware from '../../middlewares/validationMiddleware';
 import { CourseValidationSchema } from './course.validation';
 import { CourseControllers } from './course.controller';
+import authMiddleware from '../../middlewares/authMiddleware';
 
 const courseRouter = Router();
 const coursesRouter = Router();
-// course route
-courseRouter.post(
+coursesRouter.post(
   '/',
+  authMiddleware("admin"),
   validationMiddleware(CourseValidationSchema.createCourseValidationSchema),
   CourseControllers.createCourse,
 );
 courseRouter.get('/best', CourseControllers.getBestCourse);
-
-// courses route
 coursesRouter.get('/', CourseControllers.getAllCourse);
 coursesRouter.get('/:courseId/reviews', CourseControllers.getCourseWithReview);
 coursesRouter.put(
