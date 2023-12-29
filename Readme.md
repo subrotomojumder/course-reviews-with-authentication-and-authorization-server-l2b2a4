@@ -15,8 +15,11 @@ npm i
 
 ```bash
 PORT= port 
-DATABASE_URL= database uri
-NODE_ENV= development or production
+DATABASE_URL= database-uri
+NODE_ENV= development-or-production
+BCRYPT_SALT_ROUNDS= number
+JWT_ACCESS_SECRET= secret-key
+JWT_ACCESS_EXPIRE_IN= 10m | 2d | 30d 
 ```
 * After run npm run dev to start the server.
 

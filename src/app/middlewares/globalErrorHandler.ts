@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { ErrorRequestHandler } from 'express';
 import AppError from '../errors/AppError';
 import { ZodError } from 'zod';
@@ -9,6 +10,7 @@ import handleValidationError from '../errors/errorHelpers/handlerValidationError
 import handlerCastError from '../errors/errorHelpers/handlerCastError';
 import handlerDuplicateError from '../errors/errorHelpers/handleDuplicateError';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
   let errorInfo: IErrorResponse = {
     success: false,

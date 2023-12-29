@@ -1,6 +1,6 @@
 import { Course } from './course.model';
 import { ICourse } from './course.interface';
-import mongoose, { Types } from 'mongoose';
+import mongoose from 'mongoose';
 import { search } from '../../queryHelpers/search';
 import { searchableFields } from './course.constant';
 import { filter } from '../../queryHelpers/filter';

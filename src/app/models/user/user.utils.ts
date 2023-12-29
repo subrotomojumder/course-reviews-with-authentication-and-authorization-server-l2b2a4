@@ -27,3 +27,4 @@ export const createToken = (jwtPayload: {
 export const verifyToken = (token: string) => {
   return jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
 };
+

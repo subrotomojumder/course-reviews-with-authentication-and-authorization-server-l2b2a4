@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Model } from 'mongoose';
 import { Types } from 'mongoose';
 export type ITag = {
