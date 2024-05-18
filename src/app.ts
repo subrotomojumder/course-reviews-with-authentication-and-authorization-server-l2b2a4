@@ -15,7 +15,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send({ message });
 });
 
-app.all('*', notFound); // not found route
+app.all('*', notFound);
 app.use(globalErrorHandler);
 
 export default app;
